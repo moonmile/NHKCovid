@@ -274,6 +274,19 @@ export default {
       var datasets = []
       var labels = []
 
+      // 最終日を取得
+      var lastdate = null 
+      locations.forEach( location => {
+        res.data.result.forEach(el => {
+            if ( el.location == location ) {
+              var dt = Date.parse( el.date )
+              if ( el.casesRt > 0.0 && dt > lastdate ) {
+                lastdate = dt 
+              }
+            }
+        })
+      })
+
       var i = 0;
       locations.forEach(location => {
         var data = [];
@@ -283,16 +296,17 @@ export default {
           if ( el.location == location ) {
             var dt = Date.parse( el.date )
             if ( sdate <= dt && dt <= edate ) {
-              dt = new Date(dt)
-              dt = dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() 
-              labels.push( dt )
-              if ( el.casesRt > 0.0 ) {
+              var dt2 = new Date(dt)
+              dt2 = dt2.getFullYear() + "/" + (dt2.getMonth()+1) + "/" + dt2.getDate() 
+              labels.push( dt2 )
+              if ( dt < lastdate ) {
                 data.push( el.casesRt )
                 data2.push( el.casesRtAverage )
               }
             }
           }
         });
+
         // this.datart.labels = labels 
         var dataset = 
           {
