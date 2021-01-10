@@ -465,6 +465,19 @@ export default {
       var datasets = []
       var labels = []
 
+      // 最終日を取得
+      var lastdate = null 
+      locations.forEach( location => {
+        res.data.result.forEach(el => {
+            if ( el.location == location ) {
+              var dt = Date.parse( el.date )
+              if ( el.casesRt > 0.0 && dt > lastdate ) {
+                lastdate = dt 
+              }
+            }
+        })
+      })
+
       var i = 0;
       locations.forEach(location => {
         var data = [];
@@ -474,10 +487,10 @@ export default {
           if ( el.location == location ) {
             var dt = Date.parse( el.date )
             if ( sdate <= dt && dt <= edate ) {
-              dt = new Date(dt)
-              dt = dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() 
-              labels.push( dt )
-              if ( el.casesRt > 0.0 ) {
+              var dt2 = new Date(dt)
+              dt2 = dt2.getFullYear() + "/" + (dt2.getMonth()+1) + "/" + dt2.getDate() 
+              labels.push( dt2 )
+              if ( dt < lastdate ) {
                 data.push( el.casesRt )
                 data2.push( el.casesRtAverage )
               }
@@ -561,13 +574,13 @@ export default {
             // 過去7日間の cases と Rt から予測 cases を計算する
             var len = data.length ;
             var cases = (
-            data[ len-7 ] * data2[ len-7 ] + 
-            data[ len-6 ] * data2[ len-6 ] +
-            data[ len-5 ] * data2[ len-5 ] + 
-            data[ len-4 ] * data2[ len-4 ] + 
-            data[ len-3 ] * data2[ len-3 ] + 
-            data[ len-2 ] * data2[ len-2 ] + 
-            data[ len-1 ] * data2[ len-1 ] ) / 7.0 ;
+            data[ len-7 ] * data2[ len-7 ] * 1.0 + 
+            data[ len-6 ] * data2[ len-6 ] * 2.0 +
+            data[ len-5 ] * data2[ len-5 ] * 3.0 + 
+            data[ len-4 ] * data2[ len-4 ] * 4.0 + 
+            data[ len-3 ] * data2[ len-3 ] * 5.0 + 
+            data[ len-2 ] * data2[ len-2 ] * 6.0 + 
+            data[ len-1 ] * data2[ len-1 ] * 7.0 ) / 28.0 ;
             data.push( Math.floor(cases))
             data2.push( rt );
 

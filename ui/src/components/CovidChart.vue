@@ -382,15 +382,16 @@ export default {
         var rt = last.casesRtAverage ;
         for ( var j=1; j<=40; j++ ) {
             // 過去7日間の cases と Rt から予測 cases を計算する
+            // 重みづけをする
             var len = data.length ;
             var cases = (
-            data[ len-7 ] * data2[ len-7 ] + 
-            data[ len-6 ] * data2[ len-6 ] +
-            data[ len-5 ] * data2[ len-5 ] + 
-            data[ len-4 ] * data2[ len-4 ] + 
-            data[ len-3 ] * data2[ len-3 ] + 
-            data[ len-2 ] * data2[ len-2 ] + 
-            data[ len-1 ] * data2[ len-1 ] ) / 7.0 ;
+            data[ len-7 ] * data2[ len-7 ] * 1.0 + 
+            data[ len-6 ] * data2[ len-6 ] * 2.0 +
+            data[ len-5 ] * data2[ len-5 ] * 3.0 + 
+            data[ len-4 ] * data2[ len-4 ] * 4.0 + 
+            data[ len-3 ] * data2[ len-3 ] * 5.0 + 
+            data[ len-2 ] * data2[ len-2 ] * 6.0 + 
+            data[ len-1 ] * data2[ len-1 ] * 7.0 ) / 28.0 ;
             data.push( Math.floor(cases))
             data2.push( rt );
 
