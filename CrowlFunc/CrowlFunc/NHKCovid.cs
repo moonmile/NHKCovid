@@ -95,6 +95,22 @@ namespace CrowlFunc
             return new OkObjectResult("japan.json " + DateTime.Now.ToString());
         }
 
+        /// <summary>
+        /// ÉèÅ[ÉNóÃàÊÇ©ÇÁóéÇøÇ»Ç¢ÇÊÇ§Ç… 5ï™ä‘äuÇ≈ãNìÆÇµÇƒÇ®Ç≠
+        /// </summary>
+        /// <param name="myTimer"></param>
+        /// <param name="jsonfile"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        [FunctionName("Heartbeat")]
+        public static void Heartbeat([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
+            [Blob("covid/japan.json", FileAccess.Write)] Stream jsonfile,
+            ILogger log)
+
+        {
+            log.LogInformation("called Heartbeat");
+        }
+
         [FunctionName("NHKCovidTimer")]
         public static async Task RunTimer([TimerTrigger("0 5 * * * *")] TimerInfo myTimer,
             [Blob("covid/japan.json", FileAccess.Write)] Stream jsonfile,
@@ -260,29 +276,32 @@ namespace CrowlFunc
             }
 #else
             // çÇë¨âªÇµÇƒÇ®Ç≠
-            var lastdate = data.Max(t => t.Date);
-
             for (int i = 0; i < data.Count() - 7; i++)
             {
-                if (i < 7) continue;
-                if (data[i].Date > lastdate.AddDays(-7)) continue;
-                // 1èTä‘ëkÇÈ
-                if (data[i - 1].Location != data[i].Location) continue;
-                if (data[i - 2].Location != data[i].Location) continue;
-                if (data[i - 3].Location != data[i].Location) continue;
-                if (data[i - 4].Location != data[i].Location) continue;
-                if (data[i - 5].Location != data[i].Location) continue;
-                if (data[i - 6].Location != data[i].Location) continue;
-                data[i].CasesRtAverage =
-                    (data[i].CasesRt +
-                    data[i - 1].CasesRt +
-                    data[i - 2].CasesRt +
-                    data[i - 3].CasesRt +
-                    data[i - 4].CasesRt +
-                    data[i - 5].CasesRt +
-                    data[i - 6].CasesRt) / 7.0f;
+                var item0 = data[i];
+                // 1èTä‘å„Ç‹Ç≈
+                if (data[i + 1].Location != data[i].Location) continue;
+                if (data[i + 2].Location != data[i].Location) continue;
+                if (data[i + 3].Location != data[i].Location) continue;
+                if (data[i + 4].Location != data[i].Location) continue;
+                if (data[i + 5].Location != data[i].Location) continue;
+                if (data[i + 6].Location != data[i].Location) continue;
+                if (data[i + 7].Location != data[i].Location) continue;
+                if (data[i].CasesAverage == 0)
+                    data[i].CasesRtAverage = 0.0f;
+                else
+                    data[i].CasesRtAverage =
+                        (float)(data[i + 1].CasesAverage +
+                        data[i + 2].CasesAverage +
+                        data[i + 3].CasesAverage +
+                        data[i + 4].CasesAverage +
+                        data[i + 5].CasesAverage +
+                        data[i + 6].CasesAverage +
+                        data[i + 7].CasesAverage) / 7.0f / (float)data[i].CasesAverage;
             }
+
 #endif
+
         }
 
     }
