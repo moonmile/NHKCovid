@@ -104,7 +104,6 @@ namespace CrowlFunc
         /// <returns></returns>
         [FunctionName("Heartbeat")]
         public static void Heartbeat([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer,
-            [Blob("covid/japan.json", FileAccess.Write)] Stream jsonfile,
             ILogger log)
 
         {
@@ -119,7 +118,7 @@ namespace CrowlFunc
         /// <param name="log"></param>
         /// <returns></returns>
         [FunctionName("NHKCovidTimer")]
-        public static async Task RunTimer([TimerTrigger("0 7 * * * *")] TimerInfo myTimer,
+        public static async Task RunTimer([TimerTrigger("0 5 * * * *")] TimerInfo myTimer,
             [Blob("covid/japan.json", FileAccess.Write)] Stream jsonfile,
             ILogger log)
 
