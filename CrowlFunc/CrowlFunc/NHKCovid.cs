@@ -111,8 +111,15 @@ namespace CrowlFunc
             log.LogInformation("called Heartbeat");
         }
 
+        /// <summary>
+        /// NHK Covid ÉTÉCÉgÇ…ê⁄ë±
+        /// </summary>
+        /// <param name="myTimer"></param>
+        /// <param name="jsonfile"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
         [FunctionName("NHKCovidTimer")]
-        public static async Task RunTimer([TimerTrigger("0 5 * * * *")] TimerInfo myTimer,
+        public static async Task RunTimer([TimerTrigger("0 7 * * * *")] TimerInfo myTimer,
             [Blob("covid/japan.json", FileAccess.Write)] Stream jsonfile,
             ILogger log)
 
